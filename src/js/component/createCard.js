@@ -1,40 +1,60 @@
-import React, { useContext } from "react";
+import React, { useContext, useState } from "react";
 import { Context } from "../store/appContext";
+import { useNavigate } from "react-router-dom";
 
 const CreateCard = () => {
   const { store, actions } = useContext(Context);
+  const navigate = useNavigate();
+
+  const handleClick = (id) => {
+    actions.editContact(id);
+    navigate("./addContact");
+  };
+
   return (
     <>
-      {store.listContacts.map((contact, index) => (
-        <div
-          key={index}
-          id={contact.id}
-          className="card"
-          style={{ width: "40rem", height: "10rem" }}
-        >
-          <div className="card-body">
-            <img src={contact.photo} className="card-img-top"></img>
-            <p>{contact.name}</p>
-            <p>{contact.email}</p>
-            <p>{contact.phone}</p>
-            <p>{contact.address}</p>
-            <button
-              type="button"
-              className="btn btn-secondary"
-              onClick={() => actions.editContact(contact.id)}
-            >
-              <i className="fa-solid fa-pen"></i>
-            </button>
-            <button
-              type="button"
-              className="btn btn-danger"
-              onClick={() => actions.deleteContact(contact.id)}
-            >
-              <i className="fa-solid fa-trash"></i>
-            </button>
+      {store.listContacts.lenght === 0 ? (
+        <p className="text-center fs-3"> Lista de contactos vacia</p>
+      ) : (
+        store.listContacts.map((contact, index) => (
+          <div
+            key={index}
+            id={contact.id}
+            className="card row"
+            style={{ width: "40rem", height: "20rem" }}
+          >
+            <div className="card-header col">
+              <img src={contact.image} alt="Aqui va la imagen"></img>
+            </div>
+            <div className="card-body col ">
+              <div className="d-flex justify-content-between">
+                <div className="justify-content-column">
+                  <p>{contact.name}</p>
+                  <p>{contact.email}</p>
+                  <p>{contact.phone}</p>
+                  <p>{contact.address}</p>
+                </div>
+                <div className="btn btn-group">
+                  <button
+                    type="button"
+                    className="btn btn-secondary"
+                    onClick={() => handleClick(contact.id)}
+                  >
+                    <i className="fa-solid fa-pen"></i>
+                  </button>
+                  <button
+                    type="button"
+                    className="btn btn-danger"
+                    onClick={() => actions.deleteContact(contact.id)}
+                  >
+                    <i className="fa-solid fa-trash"></i>
+                  </button>
+                </div>
+              </div>
+            </div>
           </div>
-        </div>
-      ))}
+        ))
+      )}
     </>
   );
 };

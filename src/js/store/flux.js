@@ -6,6 +6,7 @@ const getState = ({ getStore, getActions, setStore }) => {
     store: {
       listContacts: [],
       username: "",
+      dataCard: {},
     },
     actions: {
       // Use getActions to call a function within a fuction
@@ -124,8 +125,14 @@ const getState = ({ getStore, getActions, setStore }) => {
           console.log(error);
         }
       },
-      editContact: async (id) => {
+      editContact: async (cardID, updatedData) => {
         const store = getStore();
+        const takeId = store.listContacts.find(
+          (listContactId) => listContactId.id == id
+        );
+
+        store.dataCard = takeId;
+
         try {
           const response = await fetch(
             `https://playground.4geeks.com/contact/agendas/${store.username}/contacts/${id}`,
@@ -135,10 +142,15 @@ const getState = ({ getStore, getActions, setStore }) => {
                 accept: "application/json",
                 "Content-Type": "application/json",
               },
+              body: JSON.stringify(updatedData),
             }
           );
-          const data = await response.json();
-          console.log(data);
+          const updatedCard = await response.json();
+          setStore([
+            listContacts.map((card) =>
+              card.id === cardID ? updatedCard : card
+            ),
+          ]);
         } catch (error) {
           console.log(error);
         }

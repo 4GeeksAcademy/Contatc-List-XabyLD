@@ -8,10 +8,10 @@ export const AddContact = () => {
   //Pasar div a form, el botón dentro del form con type="submit", en lugar de onClick del botón, pondes en el tag de form onSubimt={handleSave
 
   const [dataContact, setDataContact] = useState({
-    name: "",
-    phone: "",
-    email: "",
-    address: "",
+    name: store.dataCard.name,
+    phone: store.dataCard.phone,
+    email: store.dataCard.email,
+    address: store.dataCard.address,
   });
 
   const valueInputs = (e) => {
