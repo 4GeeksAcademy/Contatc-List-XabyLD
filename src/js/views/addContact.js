@@ -5,13 +5,19 @@ import { Link, useParams } from "react-router-dom";
 export const AddContact = () => {
   const { store, actions } = useContext(Context);
 
+  const params = useParams();
+  console.log(params);
+  const editCard = store.listContacts.find(
+    (card) => card.id === Number(params.id)
+  );
+
   //Pasar div a form, el botón dentro del form con type="submit", en lugar de onClick del botón, pondes en el tag de form onSubimt={handleSave
 
   const [dataContact, setDataContact] = useState({
-    name: store.dataCard.name,
-    phone: store.dataCard.phone,
-    email: store.dataCard.email,
-    address: store.dataCard.address,
+    name: editCard?.name || "",
+    phone: editCard?.phone || "",
+    email: editCard?.email || "",
+    address: editCard?.address || "",
   });
 
   const valueInputs = (e) => {
@@ -95,12 +101,22 @@ export const AddContact = () => {
       </div>
 
       <Link to="/">
-        <button
-          onClick={() => actions.sendDataFlux(dataContact)}
-          className="btn btn-success w-100 mt-2"
-        >
-          Save
-        </button>
+        {editCard ? (
+          <button
+            onClick={() => actions.editContact(params.id, dataContact)}
+            type="button"
+            className="btn btn-secondary w-100 mt-2"
+          >
+            Edit
+          </button>
+        ) : (
+          <button
+            onClick={() => actions.sendDataFlux(dataContact)}
+            className="btn btn-success w-100 mt-2"
+          >
+            Save
+          </button>
+        )}
       </Link>
     </>
   );

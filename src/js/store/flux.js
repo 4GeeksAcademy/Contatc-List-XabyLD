@@ -1,12 +1,23 @@
 //TODO -->
-// Hacer que nos lleve al formulario correspondiente de los datos que queremos editar
+// Crear ternario para que edite en la misma card en el boton de save
 
 const getState = ({ getStore, getActions, setStore }) => {
   return {
     store: {
       listContacts: [],
       username: "",
-      dataCard: {},
+      dataCard: {
+        name: "",
+        phone: "",
+        email: "",
+        address: "",
+      },
+      editCardContact: {
+        name: "",
+        phone: "",
+        email: "",
+        address: "",
+      },
     },
     actions: {
       // Use getActions to call a function within a fuction
@@ -34,11 +45,12 @@ const getState = ({ getStore, getActions, setStore }) => {
       },
       sendDataFlux: (data) => {
         const store = getStore();
-        const actions = getActions();
-        setStore({ listContacts: [...store.listContacts, data] });
         console.log(data);
+        const actions = getActions();
+
+        setStore({ listContacts: [...store.listContacts, data] });
+
         actions.uploadContactApi(data);
-        console.log(store.listContacts);
       },
       createUserAgenda: async () => {
         try {
@@ -66,6 +78,7 @@ const getState = ({ getStore, getActions, setStore }) => {
       },
       uploadContactApi: async (list) => {
         const store = getStore();
+        const actions = getActions();
         try {
           const response = await fetch(
             `https://playground.4geeks.com/contact/agendas/${store.username}/contacts`,
@@ -79,6 +92,7 @@ const getState = ({ getStore, getActions, setStore }) => {
             }
           );
           const data = await response.json();
+          actions.getUserContacts();
           return data;
         } catch (error) {
           console.log(error);
@@ -104,34 +118,47 @@ const getState = ({ getStore, getActions, setStore }) => {
         }
       },
       deleteContact: async (id) => {
+        console.log(id);
         const store = getStore();
-        const newContacts = store.listContacts.filter(
-          (listContact) => listContact.id !== id
-        );
+
         try {
           const response = await fetch(
             `https://playground.4geeks.com/contact/agendas/${store.username}/contacts/${id}`,
             {
               method: "DELETE",
               headers: {
-                accept: "aplication/json",
+                accept: "application/json",
               },
             }
           );
-          const data = await response.json();
-          setStore({ listContacts: newContacts });
-          console.log(newContacts);
+
+          if (response.ok) {
+            const newContacts = store.listContacts.filter(
+              (contact) => contact.id !== id
+            );
+            setStore({
+              listContacts: newContacts,
+            });
+            console.log(store.listContacts);
+            alert("La tarea se ha eliminado correctamente");
+          } else {
+            alert("NO se ha podido eliminar la tarea");
+          }
         } catch (error) {
           console.log(error);
+          alert("Error al eliminar la tarea");
         }
       },
-      editContact: async (cardID, updatedData) => {
+      editContact: async (id, updatedCard) => {
         const store = getStore();
-        const takeId = store.listContacts.find(
+        const actions = getActions();
+        /* const takeId = store.listContacts.find(
           (listContactId) => listContactId.id == id
         );
 
-        store.dataCard = takeId;
+        store.dataCard = takeId; */
+
+        console.log("Edit");
 
         try {
           const response = await fetch(
@@ -142,19 +169,32 @@ const getState = ({ getStore, getActions, setStore }) => {
                 accept: "application/json",
                 "Content-Type": "application/json",
               },
-              body: JSON.stringify(updatedData),
+              body: JSON.stringify(updatedCard),
             }
           );
-          const updatedCard = await response.json();
-          setStore([
-            listContacts.map((card) =>
-              card.id === cardID ? updatedCard : card
+          const cartaActualizada = await response.json();
+          console.log(cartaActualizada);
+          /*  setStore([
+            store.listContacts.map((card) =>
+              card.id === id ? cartaActualizada : card
             ),
-          ]);
+          ]); */
+          const editList = store.listContacts.map((contact) =>
+            contact.id === id ? cartaActualizada : contact
+          );
+          setStore({ listContacts: editList });
+          actions.getUserContacts();
         } catch (error) {
           console.log(error);
         }
       },
+      /* editContactFlux: (id) => {
+        const store = getStore();
+        const editList = store.listContacts.map((contact) =>
+          contact.id === id ? store.editCardContact : contact
+        );
+        setStore({ listContacts: editList });
+      }, */
     },
   };
 };

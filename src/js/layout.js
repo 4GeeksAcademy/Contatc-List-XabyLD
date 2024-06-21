@@ -24,8 +24,10 @@ const Layout = () => {
             <Route path="/" element={<Home />} />
             <Route path="/demo" element={<Demo />} />
             <Route path="/card" element={<CreateCard />} />
+            <Route path="/card/:id" element={<CreateCard />} />
             <Route path="/single/:theid" element={<Single />} />
             <Route path="/addContact" element={<AddContact />} />
+            <Route path="/addContact/:id" element={<AddContact />} />
             <Route path="*" element={<h1>Not found!</h1>} />
           </Routes>
           <Footer />

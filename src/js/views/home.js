@@ -11,7 +11,7 @@ export const Home = () => {
   const pickUser = (event) => {
     const user = event.target.value;
     if (event.key === "Enter") {
-      if (!user) return;
+      if (!user) return alert("Introduzca un usuario por favor");
       actions.setUsername(user);
       actions.createUserAgenda();
       actions.getUserContacts();
